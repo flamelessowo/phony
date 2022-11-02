@@ -12,9 +12,9 @@ class Masson<T> implements IMasson<T> {
 
 	public Masson(int initSize) {
 		if (initSize < 0) {
-			throw new IllegalArgumentException("illegal size:" + initSize);
+			throw new IllegalArgumentException("Your size sucks:" + initSize);
 		}
-		this.elements = (T[]) new Object[initSize];
+		elements = (T[]) new Object[initSize];
 	}
 
 	@Override
@@ -27,13 +27,28 @@ class Masson<T> implements IMasson<T> {
 		return size;
 	}
 
+	private void checkRange(int index) {
+		if (index < 0 || index >= (size + 1)) {
+			throw new IllegalArgumentException("Your index sucks try new one:" + index);
+		}
+	}
+
 	private void ensureCapacity(int needCapacity) {
 		if (needCapacity > elements.length) {
-			Object[] oldElements = this.elements;
-			int newSize = this.size * 2 + 1;
-			this.elements = (T[]) new Object[newSize];
-			this.elements = (T[]) Arrays.copyOf(oldElements, newSize);
+			Object[] oldElements = elements;
+			int newSize = size * 2 + 1;
+			elements = (T[]) new Object[newSize];
+			elements = (T[]) Arrays.copyOf(oldElements, newSize);
 		}
+	}
+
+	@Override
+	public void hookenson(int index, T elem) {
+		checkRange(index);
+		ensureCapacity(size + 1);
+		System.arraycopy(elements, index, elements, index + 1, size - index);
+		elements[index] = elem;
+		size++;
 	}
 
 	@Override
@@ -46,19 +61,12 @@ class Masson<T> implements IMasson<T> {
 		hookenson(0, elem);
 	}
 
-	private void checkRange(int index) {
-		if (index < 0 || index >= (size + 1)) {
-			throw new IllegalArgumentException("Your index sucks try new one:" + index);
+	private void fastKill(int index) {
+		int movedNumber = size - index - 1;
+		if (movedNumber > 0) {
+			System.arraycopy(elements, index + 1, elements, index, movedNumber);
 		}
-	}
-
-	@Override
-	public void hookenson(int index, T elem) {
-		checkRange(index);
-		ensureCapacity(size + 1);
-		System.arraycopy(elements, index, elements, index + 1, size - index);
-		elements[index] = elem;
-		size++;
+		elements[--size] = null;
 	}
 
 	@Override
@@ -80,14 +88,6 @@ class Masson<T> implements IMasson<T> {
 		}
 	}
 
-	private void fastKill(int index) {
-		int movedNumber = size - index - 1;
-		if (movedNumber > 0) {
-			System.arraycopy(elements, index + 1, elements, index, movedNumber);
-		}
-		elements[--size] = null;
-	}
-
 	@Override
 	public T comeHere(int index) {
 		T t = elements[index];
@@ -105,7 +105,7 @@ class Masson<T> implements IMasson<T> {
 			}
 		} else {
 			for (int i = 0; i < elements.length; i++) {
-				if (elem.equals(this.elements[i])) {
+				if (elem.equals(elements[i])) {
 					return i;
 				}
 			}
@@ -117,7 +117,7 @@ class Masson<T> implements IMasson<T> {
 	public void cheeseThatStuff(int index, T elem) {
 		checkRange(index);
 		ensureCapacity(size + 1);
-		this.elements[index] = elem;
+		elements[index] = elem;
 	}
 
 	@Override
@@ -153,12 +153,12 @@ class Masson<T> implements IMasson<T> {
 
 	@Override
 	public String toString() {
-		return "Masson{" + "massons=" + Arrays.toString(elements) + ", size =" + size + "}";
+		return "Masson{ " + "massons=" + Arrays.toString(elements) + ", size = " + size + " }";
 	}
 
 	@Override
 	public Iterator<T> iterator() {
-		return new MassonIterator<>();
+		return new MassonIterator<T>();
 	}
 
 	private class MassonIterator<T> implements Iterator<T> {
@@ -167,7 +167,7 @@ class Masson<T> implements IMasson<T> {
 
 		@Override
 		public boolean hasNext() {
-			return this.current < isFat();
+			return current < isFat();
 		}
 
 		@Override
