@@ -115,6 +115,49 @@ void print_table(H_table* table) {
   printf("-------------------\n\n");
 }
 
+// Linked list for collisions
+
+typedef struct LinkedList LinkedList;
+
+struct LinkedList {
+    H_item* item;
+    LinkedList* next;
+};
+
+LinkedList* allocate_list() { 
+  LinkedList* list = (LinkedList*) malloc(sizeof(LinkedList));
+  return list;
+}
+
+LinkedList* linkedlist_insert(LinkedList* list, H_item* item) {
+  if (!list) {
+    LinkedList* head = allocate_list();
+    head->item = item;
+    head->next = NULL;
+    list = head;
+    return list;
+  } else if (list->next == NULL) {
+    LinkedList* node = allocate_list();
+    node->item = item;
+    node->next = NULL;
+    list->next = node;
+    return list;
+  }
+
+  LinkedList* temp = list;
+  while (temp->next->next) {
+    temp = temp->next;
+  }
+
+  LinkedList* node = allocate_list();
+  node->item = item;
+  node->next = NULL;
+  temp->next = node;
+
+  return list;
+
+}
+
 int main(int argc, char** argv) {
   H_table* ht = create_table(CAPACITY);
   h_insert(ht, "user", "cool");
