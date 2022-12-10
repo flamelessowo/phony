@@ -9,7 +9,7 @@ class EvtEmitter{
   }
 
   on(name, listener) {
-    if (!this._events.name) {
+    if (!this._events[name]) {
       this._events[name] = [];
     }
     this._events[name].push(listener);
@@ -37,7 +37,9 @@ class EvtEmitter{
 function main() {
   const eve = new EvtEmitter();
   let somecallb = () => {console.log("shit im ded")};
+  let anothercallb = () => {console.log("shit for real")};
   eve.on("die", somecallb);
+  eve.on("die", anothercallb);
   eve.emit("die");
   eve.removeListener("die", somecallb);
   eve.emit("die");
