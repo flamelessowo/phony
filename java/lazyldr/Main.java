@@ -35,6 +35,11 @@ class Cat {
 }
 
 class CatList implements CatListI {
+
+  public CatList() {
+    // Here imagine really heavy constructor logic
+    // so proxy makes sense
+  }
   @Override
   public List<Cat> getCatList() {
     return Arrays.asList(
