@@ -58,11 +58,12 @@ int main(int argc, char** argv) {
   struct sockaddr_in serv_addr, client_addr;
   int serv_port;
   int client_len;
+  char buffer[1024];
   
   //getopt part
   int optChar;
-  char* ip = NULL;
-  char* port = NULL;
+  char* ip = "127.0.0.1";
+  char* port = "8000";
   while ((optChar = getopt(argc, argv, "p:a:")) != -1) {
     switch(optChar) {
       case 'p':
@@ -87,8 +88,21 @@ int main(int argc, char** argv) {
 
   for (;;) {
     client_len = sizeof(client_addr);
+    printf("Waiting for clients...\n");
     clientsock = accept_wrap(servsock, &client_addr, client_len); 
+    char *client_ip = inet_ntoa(client_addr.sin_addr);
+    printf("Accepted new connection from a client %s:%d\n", client_ip, ntohs(client_addr.sin_port)); 
+    memset(buffer, 0, sizeof(buffer));
+    int size = read(clientsock, buffer, sizeof(buffer));
+    if (size < 0) {
+      throw_std_err("Read error");
+    }
+    printf("Received %s from client\n", buffer);
+    if (write(clientsock, buffer, size) < 0) {
+      throw_std_err("Write error");
+    }
+    close(clientsock);
   }
-  
-  return 0;
+  close(servsock); 
+  exit(0);
 }
