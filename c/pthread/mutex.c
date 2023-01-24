@@ -13,10 +13,10 @@ int main(int argc, char** argv) {
   pthread_t thread1, thread2;
 
   // Create independent threads each of which will exec withMutex
-  if ((rc1=pthread_create( &thread1, NULL, &withMutex, NULL ))) {
+  if ((rc1=pthread_create( &thread1, NULL, &withoutMutex, NULL ))) {
     printf("Thread creation failed: %d\n", rc1);
   }
-  if ((rc2=pthread_create(&thread2, NULL, &withMutex, NULL))) {
+  if ((rc2=pthread_create(&thread2, NULL, &withoutMutex, NULL))) {
     printf("Thread creation failed: %d\n", rc1);
   }
 
