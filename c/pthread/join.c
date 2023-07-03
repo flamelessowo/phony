@@ -29,4 +29,3 @@ void* thread_function(void* dummyPtr) {
   counter++;
   pthread_mutex_unlock(&mutex1);
 }
-
