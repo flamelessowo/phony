@@ -14,8 +14,8 @@ if __name__ == "__main__":
             while True:
                 conn.sendto(','.join(FileLoader.list()).encode("UTF-8"), addr)
                 fname: bytes = conn.recv(1024).decode()
-                file: bytes = FileLoader.load(fname)
+                file: str = FileLoader.load(fname)
                 print(file)
-                with open(f"{fname}a", "wb") as f:
+                with open(f"{fname}a", "w") as f:
                     f.write(file)
                 break

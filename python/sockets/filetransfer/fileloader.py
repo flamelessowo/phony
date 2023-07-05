@@ -3,7 +3,7 @@ import os
 
 class FileLoader:
     @staticmethod
-    def load(filename) -> bytes:
+    def load(filename) -> str:
         with open(filename) as f:
             return f.read()
 
