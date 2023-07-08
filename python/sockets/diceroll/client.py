@@ -20,8 +20,8 @@ class Client:
 
 if __name__ == '__main__':
     client = Client('localhost', 5432, socket.AF_INET, socket.SOCK_STREAM)
-    sock: socket.socket = client.connect()
-    welcome_message: str = sock.recv(1024).decode('utf-8')
-    print(welcome_message)
-    while True:
-        pass
+    serv_sock: socket.socket = client.connect()
+    welcome_message: str = serv_sock.recv(1024).decode('utf-8')
+    serv_sock.send('roll'.encode('utf-8'))
+    winner = serv_sock.recv(1024).decode('utf-8')
+    print(winner)

@@ -26,7 +26,23 @@ class Server:
                 self.clients.append(cli_sock)
                 if (len(self.clients) == 2):
                     for sock in self.clients:
-                        sock.sendall(b"2 clients connected")
+                        sock.sendall(b"2 clients connected. \n Game started type roll.")
+                    self.clients[0].recv(1024)
+                    first_roll = roll_de_dice()
+                    self.clients[1].recv(1024)
+                    second_roll = roll_de_dice()
+                    winmsg = f"{'First' if first_roll > second_roll else 'Second'} player won! Score: {first_roll} vs {second_roll}".encode()
+                    if first_roll == second_roll:
+                        winmsg = f"Draw! Score: {first_roll} vs {second_roll}".encode()
+                    if first_roll > second_roll:
+                        self.clients[0].send(winmsg)
+                        self.clients[1].send(winmsg)
+                    elif first_roll < second_roll:
+                        self.clients[0].send(winmsg)
+                        self.clients[1].send(winmsg)
+                    else:
+                        self.clients[0].send(winmsg)
+                        self.clients[1].send(winmsg)
                     break
             except socket.error:
                 pass
